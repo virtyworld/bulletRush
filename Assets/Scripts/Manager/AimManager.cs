@@ -9,6 +9,8 @@ public class AimManager : MonoBehaviour
 
     private List<GameObject> enemiesList = new List<GameObject>();
 
+    [SerializeField] private GameObject[] bulletsPrefab;
+    
     public GameObject closestEnemy;
     [SerializeField] private float maxRange = 1000;
 
@@ -33,20 +35,23 @@ public class AimManager : MonoBehaviour
 
     void ClosestEnemy()
     {
-        Debug.Log("ClosestEnemy");
+       
         float range = maxRange;
 
         foreach (GameObject enemyGameObject in enemiesList)
         {
-            float dist = Vector3.Distance(enemyGameObject.transform.position, transform.position);
-
-
-            if (dist < range)
+            if (enemyGameObject)
             {
-                Debug.Log("dist < maxRange");
-                range = dist;
-                closestEnemy = enemyGameObject;
+                float dist = Vector3.Distance(enemyGameObject.transform.position, transform.position);
+
+
+                if (dist < range)
+                {
+                    range = dist;
+                    closestEnemy = enemyGameObject;
+                } 
             }
+           
         }
 
         foreach (LookAtEnemy lookAtEnemy in _lookAtEnemies)
@@ -60,4 +65,5 @@ public class AimManager : MonoBehaviour
     {
         enemiesList.Remove(closeseEnemy);
     }
+   
 }

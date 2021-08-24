@@ -5,13 +5,13 @@ using UnityEngine;
 
 public class Enemy : MonoBehaviour
 {
-
-    [SerializeField] private float health;
+    
     [SerializeField] private GameObject enemyBullet;
     
     [Header("Shoot settings")]
     [SerializeField] private float waitTime;
     [SerializeField] private GameObject bulletSpawnPoint;
+    [SerializeField] private float range;
     
     private float currentTime;
 
@@ -20,49 +20,55 @@ public class Enemy : MonoBehaviour
 
     private bool shoot;
     private Shoot shootComponent;
+    private Health health;
     
-    public float Health
-    {
-        get => health;
-        set => health = value;
-    }
+   
 
     // Start is called before the first frame update
     void Start()
     {
         player = GameObject.FindWithTag("Player");
         shootComponent = GetComponent<Shoot>();
+        health = GetComponent<Health>();
+        
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (health <= 0)
+        if (health.MyHealth <= 0)
         {
             Die();
         }
         
-        transform.LookAt(player.transform);
+        float dist = Vector3.Distance(player.transform.position, transform.position);
 
-        if (currentTime == 0)
+        if (range > dist)
         {
-            Shoot();
-        }
+         
+            transform.LookAt(player.transform);
 
-        if (shoot && currentTime < waitTime)
-        {
-            currentTime += 1 * Time.deltaTime;
-        }
+            if (currentTime == 0)
+            {
+                Shoot();
+            }
 
-        if (currentTime >= waitTime)
-        {
-            currentTime = 0;
+            if (shoot && currentTime < waitTime)
+            {
+                currentTime += 1 * Time.deltaTime;
+            }
+
+            if (currentTime >= waitTime)
+            {
+                currentTime = 0;
+            } 
         }
+       
     }
 
     private void OnTriggerEnter(Collider other)
     {
-        Debug.Log(health);
+      
     }
 
     public void Die()

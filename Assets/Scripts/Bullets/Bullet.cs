@@ -10,6 +10,7 @@ public class Bullet : MonoBehaviour
     [SerializeField] private float damage;
     [SerializeField] private float moveSpeed;
 
+    
      private GameObject enemyTriggered;
     
     
@@ -30,19 +31,24 @@ public class Bullet : MonoBehaviour
         }
         
         transform.Translate(Vector3.forward * Time.deltaTime * moveSpeed);
-        //kek
+       
     }
 
     private void OnTriggerEnter(Collider other)
     {
         if (other.tag == "Enemy")
         {
-            other.gameObject.GetComponent<Enemy>().Health -= damage;
+            other.gameObject.GetComponent<Health>().MyHealth -= damage;
             Destroy(gameObject);
         }
         if (other.tag == "Player")
         {
             other.gameObject.GetComponent<Player>().Health -= damage;
+            Destroy(gameObject);
+        }
+        if (other.tag == "Box")
+        {
+            other.gameObject.GetComponent<Health>().MyHealth -= damage;
             Destroy(gameObject);
         }
     }
