@@ -30,6 +30,7 @@ public class Bullet : MonoBehaviour
         }
         
         transform.Translate(Vector3.forward * Time.deltaTime * moveSpeed);
+        //kek
     }
 
     private void OnTriggerEnter(Collider other)
