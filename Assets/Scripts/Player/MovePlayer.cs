@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using EasyJoystick;
 using UnityEngine;
 
@@ -8,14 +6,17 @@ public class MovePlayer : MonoBehaviour
     [SerializeField] private float speed;
 
     [SerializeField] private Joystick joystick;
-    [SerializeField] private Animator anim;
 
-    private LookAtEnemy _lookAtEnemy;
-    
+    private AnimationScript animScript;
+
+    private AimManager _lookAtEnemy;
+
+
     // Start is called before the first frame update
     void Start()
     {
-        _lookAtEnemy = GetComponent<LookAtEnemy>();
+        _lookAtEnemy = GetComponent<AimManager>();
+        animScript = GetComponent<AnimationScript>();
     }
 
     // Update is called once per frame
@@ -24,25 +25,35 @@ public class MovePlayer : MonoBehaviour
         float xMovement = joystick.Horizontal();
         float zMovement = joystick.Vertical();
 
-        transform.position += new Vector3(xMovement, 0f, zMovement)*speed*Time.deltaTime;
 
-        if (!_lookAtEnemy.enemy)
+        transform.position += new Vector3(xMovement, 0f, zMovement) * speed * Time.deltaTime;
+
+
+        if (_lookAtEnemy.closestEnemy)
         {
-            transform.forward = new Vector3(xMovement, 0f, zMovement) * speed * Time.deltaTime; 
-        }
-      
-        
-        
-       
-        if (joystick.Vertical() == 0)
-        {
-           //anim.SetBool("Walking",false);
+            float dist = Vector3.Distance(_lookAtEnemy.closestEnemy.transform.position, transform.position);
+
+            if (dist < _lookAtEnemy.MAXRange && dist > 0)
+            {
+            }
+            else
+            {
+                transform.forward = new Vector3(xMovement, 0f, zMovement) * speed * Time.deltaTime;
+            }
         }
         else
         {
-            //anim.SetBool("Walking",true);
+            transform.forward = new Vector3(xMovement, 0f, zMovement) * speed * Time.deltaTime;
         }
-         
-         
+
+
+        if (joystick.Vertical() == 0)
+        {
+            animScript.AnimationPrefab.SetBool("Running", false);
+        }
+        else
+        {
+            animScript.AnimationPrefab.SetBool("Running", true);
+        }
     }
 }

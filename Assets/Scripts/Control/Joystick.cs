@@ -51,6 +51,8 @@ namespace EasyJoystick {
          handle = container.GetChild (0).GetComponent <RectTransform> () ;
 
          maxLength = (container.sizeDelta.x / 2f) - (handle.sizeDelta.x / 2f) - 5f ;
+
+         cam = Camera.main;
       }
 
       public void OnPointerDown (PointerEventData e) {

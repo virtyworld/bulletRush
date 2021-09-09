@@ -1,6 +1,3 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class Bullet : MonoBehaviour
@@ -9,16 +6,13 @@ public class Bullet : MonoBehaviour
     [SerializeField] private float aliveTime;
     [SerializeField] private float damage;
     [SerializeField] private float moveSpeed;
-
+    [SerializeField] private GameObject bulletHolePrefub;
     
-     private GameObject enemyTriggered;
+    private GameObject enemyTriggered;
     
     
     // Start is called before the first frame update
-    void Start()
-    {
-        // transform.rotation = bulletSpawn.transform.rotation;
-    }
+   
 
     // Update is called once per frame
     void Update()
@@ -36,14 +30,15 @@ public class Bullet : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.tag == "Enemy")
+       
+        if (other.tag == "Enemy" && gameObject.tag == "PlayerBullet")
         {
             other.gameObject.GetComponent<Health>().MyHealth -= damage;
             Destroy(gameObject);
         }
-        if (other.tag == "Player")
+        if (other.tag == "Player" && gameObject.tag == "EnemyBullet")
         {
-            other.gameObject.GetComponent<Player>().Health -= damage;
+            other.gameObject.GetComponent<Health>().MyHealth -= damage;
             Destroy(gameObject);
         }
         if (other.tag == "Box")
@@ -51,5 +46,34 @@ public class Bullet : MonoBehaviour
             other.gameObject.GetComponent<Health>().MyHealth -= damage;
             Destroy(gameObject);
         }
+        if (other.tag == "Barell")
+        {
+            other.gameObject.GetComponent<Health>().MyHealth -= damage;
+            Destroy(gameObject);
+        }
+
+        if (other.tag == "Tree")
+        {
+            RaycastHit raycastHit;
+            Ray ray = new Ray(transform.position, other.transform.position - transform.position);
+            if (Physics.Raycast(ray,out raycastHit))
+            {
+                SpawnDecal(raycastHit);
+                DestroyBullet(gameObject);
+            }
+        }
+    }
+    
+    private void SpawnDecal(RaycastHit raycastHit)
+    {
+        var decal = Instantiate(bulletHolePrefub);
+        decal.transform.position = raycastHit.point;
+        decal.transform.forward = raycastHit.normal * -1;
+        Destroy(decal,15f);
+    }
+
+    private void DestroyBullet(GameObject gameObject)
+    {
+       Destroy(gameObject);
     }
 }

@@ -1,10 +1,10 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class Health : MonoBehaviour
 {
     [SerializeField] private float health;
+    private AnimationScript anim;
+    private Animator animator;
 
     public float MyHealth
     {
@@ -16,13 +16,14 @@ public class Health : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+        anim = GetComponent<AnimationScript>();
+        animator = GetComponent<Animator>();
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (MyHealth <=0)
+        if (MyHealth <= 0)
         {
             Die();
         }
@@ -32,7 +33,20 @@ public class Health : MonoBehaviour
     {
         if (MyHealth <= 0)
         {
-            Destroy(gameObject);
+            if (gameObject.tag == "Box")
+            {
+                animator.Play("Death");
+            }
+
+            if (gameObject.tag == "Enemy")
+            {
+                StartCoroutine(gameObject.GetComponent<Enemy>().Die());
+            }
+
+            if (gameObject.tag == "Player")
+            {
+                StartCoroutine(gameObject.GetComponent<Player>().Die());
+            }
         }
     }
 }

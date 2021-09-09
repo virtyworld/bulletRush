@@ -1,60 +1,63 @@
 using System.Collections;
-using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class Player : MonoBehaviour
 {
     [SerializeField] private float maxHealth;
     
-    private float health;
+    private Health health;
+    private AnimationScript anim;
+    private MovePlayer mp;
 
-    public float Health
-    {
-        get => health;
-        set => health = value;
-    }
 
     private Shoot shoot;
     
     // Start is called before the first frame update
     void Start()
     {
-        health = maxHealth;
+        health = GetComponent<Health>();
+        health.MyHealth = maxHealth;
+        
         shoot = GetComponent<Shoot>();
+        anim = GetComponent<AnimationScript>();
+        mp = GetComponent<MovePlayer>();
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.I))
-        {
-            GameManager.Instance.MyHealth -= 1;
-        }
-        if (Input.GetKeyDown(KeyCode.O))
-        {
-            GameManager.Instance.MyHealth += 1;
-        }
-        if (Input.GetMouseButtonDown(0))
-        {
-            shoot.Fire();
-        }
+        // if (Input.GetKeyDown(KeyCode.I))
+        // {
+        //    health.MyHealth -= 1;
+        // }
+        // if (Input.GetKeyDown(KeyCode.O))
+        // {
+        //     health.MyHealth += 1;
+        // }
+        // if (Input.GetMouseButtonDown(0))
+        // {
+        //       shoot.TestFire();
+        // }
+        //
+        // if (health.MyHealth <= 0)
+        // {
+        //     StartCoroutine(Die());
+        // }
 
-        if (health <= 0)
-        {
-            Die();
-        }
-
-        HealthUpdate();
+        // HealthUpdate();
     }
-
-    private void Die()
+   
+    
+    public IEnumerator Die()
     {
-        Debug.Log("Player Die");
-    }
-
-    void HealthUpdate()
-    {
-        GameManager.Instance.MyHealth = health;
+        if (health.MyHealth <= 0)
+        {
+            anim.AnimationPrefab.Play("Death");
+            gameObject.GetComponent<MovePlayer>().enabled = false;
+            gameObject.GetComponent<Shoot>().enabled = false;
+            
+            yield return new WaitForSeconds(2);
+             Destroy(gameObject);
+        }
     }
 }
